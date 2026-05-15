@@ -129,7 +129,7 @@ curl "http://localhost:8000/v2/search?q=机器学习模型出问题" # → sop-0
 
 **Phase 3 Agent**
 
-访问 http://localhost:8000/v3，输入"数据库主从延迟超过30秒怎么处理"，Agent 会先读 index.json，再读 sop-002.html，输出具体操作步骤。
+访问 http://localhost:8000/v3 ，输入"数据库主从延迟超过30秒怎么处理"，Agent 会先读 index.json，再读 sop-002.html，输出具体操作步骤。
 
 ## 目录说明
 
