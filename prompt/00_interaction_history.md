@@ -39,7 +39,7 @@
 
 ---
 
-[user] sk-58db0d35fe01401da9409d6c19014842 这个是 deepseek 的 api，你觉得可以用吗
+[user] [sk-x] 这个是 deepseek 的 api，你觉得可以用吗
 
 [assistant] 可以用，但 key 暴露了建议重新生成。需要把代码从 Anthropic SDK 改成 OpenAI 兼容格式
 
