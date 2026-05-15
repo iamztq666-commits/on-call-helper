@@ -1,0 +1,42 @@
+[
+  {
+    "id": "case-001",
+    "question": "数据库主从延迟超过30秒怎么处理？",
+    "expected_files": ["sop-002.html"],
+    "expected_keywords": ["主从延迟", "只读", "延迟监控"],
+    "max_tool_calls": 3,
+    "tags": ["database", "p1"]
+  },
+  {
+    "id": "case-002",
+    "question": "P0故障的响应流程是什么？",
+    "expected_files": ["sop-001.html", "sop-004.html"],
+    "expected_keywords": ["P0", "响应", "升级"],
+    "max_tool_calls": 5,
+    "tags": ["multi-doc", "p0"]
+  },
+  {
+    "id": "case-003",
+    "question": "推荐结果质量下降了",
+    "expected_files": ["sop-008.html"],
+    "expected_keywords": ["推荐", "模型", "降级"],
+    "max_tool_calls": 3,
+    "tags": ["ai", "quality"]
+  },
+  {
+    "id": "case-004",
+    "question": "怀疑有人入侵了系统",
+    "expected_files": ["sop-005.html"],
+    "expected_keywords": ["入侵", "安全事件", "响应流程"],
+    "max_tool_calls": 3,
+    "tags": ["security", "p0"]
+  },
+  {
+    "id": "case-005",
+    "question": "服务OOM了怎么办？",
+    "expected_files": ["sop-001.html"],
+    "expected_keywords": ["OOM", "内存", "堆栈"],
+    "max_tool_calls": 3,
+    "tags": ["backend", "p1"]
+  }
+]

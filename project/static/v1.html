@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>On-Call 关键词搜索</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; }
+    h1 { font-size: 1.4rem; }
+    .search-bar { display: flex; gap: 8px; margin: 20px 0; }
+    input { flex: 1; padding: 8px 12px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 8px 20px; font-size: 1rem; background: #0066cc; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #0052a3; }
+    .result { border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; }
+    .result h3 { margin: 0 0 6px; font-size: 1rem; }
+    .snippet { color: #555; font-size: 0.9rem; margin: 4px 0; }
+    .score { font-size: 0.8rem; color: #999; }
+    .empty { color: #888; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>On-Call 助手 — 关键词搜索</h1>
+  <div class="search-bar">
+    <input id="q" placeholder="输入关键词，如 OOM、CDN、故障..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">搜索</button>
+  </div>
+  <div id="results"></div>
+
+  <script>
+    async function doSearch() {
+      const q = document.getElementById('q').value.trim();
+      if (!q) return;
+      const res = await fetch('/v1/search?q=' + encodeURIComponent(q));
+      const data = await res.json();
+      const box = document.getElementById('results');
+      if (!data.results.length) {
+        box.innerHTML = '<p class="empty">未找到相关文档</p>';
+        return;
+      }
+      box.innerHTML = data.results.map(r => `
+        <div class="result">
+          <h3>${r.title || r.id}</h3>
+          <p class="snippet">${r.snippet}</p>
+          <span class="score">score: ${r.score} &nbsp;|&nbsp; id: ${r.id}</span>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

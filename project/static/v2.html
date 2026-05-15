@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>On-Call 语义搜索</title>
+  <style>
+    body { font-family: sans-serif; max-width: 800px; margin: 40px auto; padding: 0 16px; }
+    h1 { font-size: 1.4rem; }
+    .tag { font-size: 0.75rem; background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; }
+    .search-bar { display: flex; gap: 8px; margin: 20px 0; }
+    input { flex: 1; padding: 8px 12px; font-size: 1rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 8px 20px; font-size: 1rem; background: #1a73e8; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background: #1558b0; }
+    .rewrite-box { font-size: 0.82rem; color: #555; background: #f8f9fa; border-radius: 4px; padding: 8px 12px; margin-bottom: 14px; display: none; }
+    .rewrite-box span { font-weight: 600; color: #333; }
+    .result { border: 1px solid #e0e0e0; border-radius: 6px; padding: 12px 16px; margin-bottom: 12px; }
+    .result h3 { margin: 0 0 6px; font-size: 1rem; }
+    .snippet { color: #555; font-size: 0.9rem; margin: 4px 0; }
+    .score { font-size: 0.8rem; color: #999; }
+    .empty { color: #888; margin-top: 20px; }
+    .spinner { display: none; color: #1a73e8; margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>On-Call 助手 — 语义搜索 <span class="tag">Phase 2</span></h1>
+  <div class="search-bar">
+    <input id="q" placeholder="输入问题，如：服务器挂了、黑客攻击..." onkeydown="if(event.key==='Enter')doSearch()">
+    <button onclick="doSearch()">搜索</button>
+  </div>
+  <div class="spinner" id="spinner">⏳ 正在改写查询并检索...</div>
+  <div class="rewrite-box" id="rewrite"></div>
+  <div id="results"></div>
+
+  <script>
+    async function doSearch() {
+      const q = document.getElementById('q').value.trim();
+      if (!q) return;
+      document.getElementById('spinner').style.display = 'block';
+      document.getElementById('rewrite').style.display = 'none';
+      document.getElementById('results').innerHTML = '';
+
+      try {
+        const res = await fetch('/v2/search?q=' + encodeURIComponent(q));
+        const data = await res.json();
+
+        if (data.rewritten) {
+          const rw = data.rewritten;
+          document.getElementById('rewrite').innerHTML =
+            `<span>关键词改写：</span>${rw.keyword_query}<br>` +
+            `<span>语义改写：</span>${rw.semantic_query}`;
+          document.getElementById('rewrite').style.display = 'block';
+        }
+
+        const box = document.getElementById('results');
+        if (!data.results.length) {
+          box.innerHTML = '<p class="empty">未找到相关文档</p>';
+        } else {
+          box.innerHTML = data.results.map(r => `
+            <div class="result">
+              <h3>${r.title || r.id}</h3>
+              <p class="snippet">${r.snippet}</p>
+              <span class="score">RRF score: ${r.score} &nbsp;|&nbsp; id: ${r.id}</span>
+            </div>
+          `).join('');
+        }
+      } finally {
+        document.getElementById('spinner').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
