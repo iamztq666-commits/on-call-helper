@@ -42,10 +42,24 @@ def sliding_window(history: list, max_turns: int = 10) -> list:
     return [history[0]] + history[-(max_turns * 2 - 1):]
 
 
+def _search_hints(question: str) -> str:
+    """Run BM25 search and return top matching filenames as hints for the Agent."""
+    try:
+        from core.indexer import search_keyword
+        results = search_keyword(question)
+        hits = [f"{r.id}.html" for r in results if r.score > 0][:5]
+        if hits:
+            return f"\n\n[检索系统已找到以下可能相关的文件：{', '.join(hits)}，请结合实际内容判断是否需要读取]"
+    except Exception:
+        pass
+    return ""
+
+
 def _build_messages(question: str, history: list) -> list:
     msgs = [{"role": "system", "content": SYSTEM_PROMPT}]
     msgs += sliding_window(history)
-    msgs.append({"role": "user", "content": question})
+    content = question + _search_hints(question)
+    msgs.append({"role": "user", "content": content})
     return msgs
 
 
